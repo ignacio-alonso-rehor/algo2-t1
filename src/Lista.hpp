@@ -52,7 +52,11 @@ void Lista<T>::agregarAtras(const T& elem) {
 
 template <typename T>
 void Lista<T>::eliminar(Nat i) {
-    // Completar
+    struct Nodo **doblePunteroASiguiente = &(this->_first);
+    for (int j = 0; j < i; j++) {
+        doblePunteroAsiguiente = &((*doblePunteroASiguiente)->_next);
+    }
+    
 }
 
 template <typename T>
@@ -65,14 +69,20 @@ int Lista<T>::longitud() const {
 
 template <typename T>
 const T& Lista<T>::iesimo(Nat i) const {
-    // Completar
-    assert(false);
+    struct Nodo *nd = this->_first;
+    for(int j = 0; j < i; j++) {
+        nd = nd->_next;
+    }
+    return &(nd->_value);
 }
 
 template <typename T>
 T& Lista<T>::iesimo(Nat i) {
-    // Completar (hint: es igual a la anterior...)
-    assert(false);
+    struct Nodo *nd = this->_first;
+    for(int j = 0; j < i; j++) {
+        nd = nd->_next;
+    }
+    return &(nd->_value);
 }
 
 template <typename T>
