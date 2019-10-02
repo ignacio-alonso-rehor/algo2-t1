@@ -7,7 +7,6 @@ Lista<T>::Lista() : _first(nullptr), _last(nullptr) {
 template <typename T>
 Lista<T>::Lista(const Lista<T>& l) : Lista() {
     *this = l;
-    
 }
 
 template <typename T>
@@ -58,8 +57,10 @@ void Lista<T>::eliminar(Nat i) {
 
 template <typename T>
 int Lista<T>::longitud() const {
-    // Completar
-    return -1;
+    struct Nodo *it = _first;
+    int len = 0;
+    while (it != nullptr) {len++}
+    return len;
 }
 
 template <typename T>
