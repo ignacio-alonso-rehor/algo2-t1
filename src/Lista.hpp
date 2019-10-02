@@ -29,6 +29,7 @@ void Lista<T>::agregarAdelante(const T& elem) {
         this->_last = &node;
         this->_first = &node;
     } else {
+        (this->_first)->_prev = &node;
         node._next = this->_first;
         node._prev = nullptr;
         this->first = &node;
@@ -37,7 +38,17 @@ void Lista<T>::agregarAdelante(const T& elem) {
 
 template <typename T>
 void Lista<T>::agregarAtras(const T& elem) {
-    // Completar
+    struct Nodo node = new Nodo();
+    node._value = elem;
+    if (this->_first == nullptr) {
+        this->_last = &node;
+        this->_first = &node;
+    } else {
+        (this->_last)->_next = &node;
+        node._next = nullptr;
+        node._prev = this->_last;
+        this->_last = &node;
+    }
 }
 
 template <typename T>
