@@ -6,7 +6,13 @@ Lista<T>::Lista() : _first(nullptr), _last(nullptr) {
 
 template <typename T>
 Lista<T>::Lista(const Lista<T>& l) : Lista() {
-    *this = l;
+    struct Nodo *nodo = l._first;
+    this->_first = nullptr;
+    this->_last = nullptr;
+    while (nodo != nullptr) {
+        
+    }
+    
 }
 
 template <typename T>
