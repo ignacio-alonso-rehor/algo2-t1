@@ -1,97 +1,139 @@
 #include "Lista.h"
 
 template <typename T>
-Lista<T>::Lista() : _first(nullptr), _last(nullptr) {
+Lista<T>::Lista() : _first(nullptr), _last(nullptr), _len(0) {
 }
 
 template <typename T>
-Lista<T>::Lista(const Lista<T>& l) : Lista() {
-    struct Nodo *nodo = l._first;
-    this->_first = nullptr;
-    this->_last = nullptr;
+Lista<T>::Lista(const Lista<T>& l) : Lista() : _first(nullptr), _last(nullptr), _len(0) {
+    struct Nodo *nodo = aCopiar._first;
     while (nodo != nullptr) {
-        
+        agregarAdelante(nodo->_elem);
+        nodo = nodo->_next;
     }
-    
+    return *this;    
 }
 
 template <typename T>
 Lista<T>::~Lista() {
-    // Completar
+    struct Nodo *actual = _first;
+    struct Nodo *siguiente = nullptr;
+    while (actual != nullptr) {
+       siguiente = actual->_next;
+       delete actual;
+       actual = siguiente;
+    }
+    _first = nullptr;
+    _last = nullptr;
+    _len = 0;
 }
-
 template <typename T>
 Lista<T>& Lista<T>::operator=(const Lista<T>& aCopiar) {
-    // Completar
+    struct Nodo *nodo = aCopiar._first;
+    while (nodo != nullptr) {
+       agregarAdelante(nodo->_elem);
+      nodo = nodo->_next; 
+    }
     return *this;
 }
 
 template <typename T>
 void Lista<T>::agregarAdelante(const T& elem) {
     struct Nodo node = new Nodo();
-    node._value = elem;
-    if (this->_last == nullptr) {
-        this->_last = &node;
-        this->_first = &node;
+    node._elem = elem;
+    if (_last == nullptr) {
+        _last = &node;
+        _first = &node;
     } else {
-        (this->_first)->_prev = &node;
-        node._next = this->_first;
+        _first->_prev = &node;
+        node._next = _first;
         node._prev = nullptr;
-        this->first = &node;
-    }    
+        _first = &node;
+    }
+    _len++;
 }
 
 template <typename T>
 void Lista<T>::agregarAtras(const T& elem) {
     struct Nodo node = new Nodo();
-    node._value = elem;
-    if (this->_first == nullptr) {
-        this->_last = &node;
-        this->_first = &node;
+    node._elem = elem;
+    if (_first == nullptr) {
+        _last = &node;
+        _first = &node;
     } else {
-        (this->_last)->_next = &node;
+        _last->_next = &node;
         node._next = nullptr;
-        node._prev = this->_last;
-        this->_last = &node;
+        node._prev = _last;
+        _last = &node;
     }
+    _len++;
 }
 
 template <typename T>
 void Lista<T>::eliminar(Nat i) {
-    struct Nodo **doblePunteroASiguiente = &(this->_first);
-    for (int j = 0; j < i; j++) {
-        doblePunteroAsiguiente = &((*doblePunteroASiguiente)->_next);
+    if (i == 0) eliminarPrimero();
+    else if (i == (_len -1)) eliminarUltimo();
+    else {
+        struct Nodo **ptrDirNodo = &(_first);
+        for (int j = 0; j < i; j++) {
+            ptrDirNodo = &((*ptrDirNodo)->_next);
+        }
+        struct Nodo *ptrNodoEliminar = *ptrDirNodo;
+        *ptrDirNodo = (*ptrDirNodo)->_next;
+        ptrDirNodo = &((*ptrDirNodo)->_prev)
+        *ptrDirNodo = ptrNodoEliminar->_prev;
+        delete ptrNodoEliminar;
+        _len--;
     }
-    
+}
+
+template <typename T>
+void Lista<T>::eliminarPrimero() {
+    struct Nodo **ptrDirPrimero = &(_first);
+    if (*ptrDirPrimero != nullptr) {
+        struct Nodo *ptrNodoElminar = *ptrDirPrimero;
+        *ptrDirPrimero =  (*ptrDirPrimero)->_next;
+        if (_last == ptrNodoEliminar) _last = *ptrDirPrimero;
+        delete ptrNodoEliminar;
+        _len--;
+    }
+}
+
+template <typename T>
+void Lista<T>::eliminarUltimo() {
+    struct Nodo *ptrLast = _last;
+    if (ptrLast != nullptr) {
+        _last = _last->_prev;
+        if (_first = ptrLast) _first = _last;
+        delete ptrLast;
+        _len--;
+    }
 }
 
 template <typename T>
 int Lista<T>::longitud() const {
-    struct Nodo *it = _first;
-    int len = 0;
-    while (it != nullptr) {len++}
-    return len;
+    return _len;
 }
 
 template <typename T>
 const T& Lista<T>::iesimo(Nat i) const {
-    struct Nodo *nd = this->_first;
+    struct Nodo *nodo = _first;
     for(int j = 0; j < i; j++) {
-        nd = nd->_next;
+        nodo = nodo->_next;
     }
-    return &(nd->_value);
+    return &(nodo->_elem);
 }
 
 template <typename T>
 T& Lista<T>::iesimo(Nat i) {
-    struct Nodo *nd = this->_first;
+     struct Nodo *nodo = _first;
     for(int j = 0; j < i; j++) {
-        nd = nd->_next;
+        nodo = nodo->_next;
     }
-    return &(nd->_value);
+    return &(nodo->_elem);
 }
 
 template <typename T>
 void Lista<T>::mostrar(ostream& o) {
-    // Completar
+    
 }

@@ -89,13 +89,17 @@ public:
 
 private:
     struct Nodo {
-        T _value;
+        T _elem;
         struct Nodo *_next;
         struct Nodo *_prev;
     };
 
     struct Nodo *_first;
     struct Nodo *_last;
+    int _len;
+
+    void eliminarPrimero();
+    void eliminarUltimo();
 };
 
 #include "Lista.hpp"
