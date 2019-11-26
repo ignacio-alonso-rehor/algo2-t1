@@ -88,18 +88,21 @@ public:
     }
 
 private:
+
     struct Nodo {
-        T _elem;
-        struct Nodo *_next;
-        struct Nodo *_prev;
+        T* data;
+        struct Nodo* prev;
+        struct Nodo* next;
+
+        Nodo(const T& e) : data(new T(e)), prev(nullptr), next(nullptr) {};
     };
 
-    struct Nodo *_first;
-    struct Nodo *_last;
-    int _len;
-
-    void eliminarPrimero();
-    void eliminarUltimo();
+    void deleteList();
+    void deleteFirst();
+    void deleteLast();
+    struct Nodo* _first;
+    struct Nodo* _last;
+    int _size;
 };
 
 #include "Lista.hpp"

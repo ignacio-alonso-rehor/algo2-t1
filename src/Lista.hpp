@@ -1,139 +1,160 @@
 #include "Lista.h"
 
 template <typename T>
-Lista<T>::Lista() : _first(nullptr), _last(nullptr), _len(0) {
+Lista<T>::Lista() : _first(nullptr), _last(nullptr), _size(0){
 }
 
 template <typename T>
-Lista<T>::Lista(const Lista<T>& l) : Lista() : _first(nullptr), _last(nullptr), _len(0) {
-    struct Nodo *nodo = aCopiar._first;
-    while (nodo != nullptr) {
-        agregarAdelante(nodo->_elem);
-        nodo = nodo->_next;
-    }
-    return *this;    
+Lista<T>::Lista(const Lista<T>& l) : Lista() {
+    *this = l;
 }
 
 template <typename T>
 Lista<T>::~Lista() {
-    struct Nodo *actual = _first;
-    struct Nodo *siguiente = nullptr;
-    while (actual != nullptr) {
-       siguiente = actual->_next;
-       delete actual;
-       actual = siguiente;
-    }
-    _first = nullptr;
-    _last = nullptr;
-    _len = 0;
+    deleteList();
 }
+
+template<typename T>
+void Lista<T>::deleteList() {
+    struct Nodo* pNodo = this->_first;
+    while (pNodo != nullptr) {
+        struct Nodo* tmp = pNodo;
+        pNodo = pNodo->next;
+        delete tmp->data;
+        delete tmp;
+    }
+    this->_first = nullptr;
+    this->_last = nullptr;
+    this->_size = 0;
+}
+
 template <typename T>
 Lista<T>& Lista<T>::operator=(const Lista<T>& aCopiar) {
-    struct Nodo *nodo = aCopiar._first;
-    while (nodo != nullptr) {
-       agregarAdelante(nodo->_elem);
-      nodo = nodo->_next; 
+    this->deleteList();
+    struct Nodo* pNodo = aCopiar._first;
+    while (pNodo != nullptr) {
+        this->agregarAtras(*(pNodo->data));
+        pNodo = pNodo->next;
     }
     return *this;
 }
 
 template <typename T>
 void Lista<T>::agregarAdelante(const T& elem) {
-    struct Nodo node = new Nodo();
-    node._elem = elem;
-    if (_last == nullptr) {
-        _last = &node;
-        _first = &node;
-    } else {
-        _first->_prev = &node;
-        node._next = _first;
-        node._prev = nullptr;
-        _first = &node;
+    struct Nodo* pNodo = new Nodo(elem);
+    this->_size++;
+    if (this->_last == nullptr) {
+        this->_last = pNodo;
+        this->_first = pNodo;
+        return;
     }
-    _len++;
+    pNodo->next = this->_first;
+    (this->_first)->prev = pNodo;
+    this->_first = pNodo;
 }
 
 template <typename T>
 void Lista<T>::agregarAtras(const T& elem) {
-    struct Nodo node = new Nodo();
-    node._elem = elem;
-    if (_first == nullptr) {
-        _last = &node;
-        _first = &node;
-    } else {
-        _last->_next = &node;
-        node._next = nullptr;
-        node._prev = _last;
-        _last = &node;
+    struct Nodo* pNodo = new Nodo(elem);
+    this->_size++;
+    if (this->_first == nullptr) {
+        this->_first = pNodo;
+        this->_last = pNodo;
+        return;
     }
-    _len++;
+    pNodo->prev = this->_last;
+    (this->_last)->next = pNodo;
+    this->_last = pNodo;
 }
 
 template <typename T>
 void Lista<T>::eliminar(Nat i) {
-    if (i == 0) eliminarPrimero();
-    else if (i == (_len -1)) eliminarUltimo();
-    else {
-        struct Nodo **ptrDirNodo = &(_first);
-        for (int j = 0; j < i; j++) {
-            ptrDirNodo = &((*ptrDirNodo)->_next);
-        }
-        struct Nodo *ptrNodoEliminar = *ptrDirNodo;
-        *ptrDirNodo = (*ptrDirNodo)->_next;
-        ptrDirNodo = &((*ptrDirNodo)->_prev)
-        *ptrDirNodo = ptrNodoEliminar->_prev;
-        delete ptrNodoEliminar;
-        _len--;
+    if (i == 0) {
+        deleteFirst();
+        return;
     }
-}
+    if (i == this->_size -1) {
+        deleteLast();
+        return;
+    }
+    struct Nodo** pDirNodo = &(this->_first);
+    while (i > 0) {
+        pDirNodo = &((*pDirNodo)->next);
+        i--;
+    }
+    struct Nodo* pNodoEliminar = *pDirNodo;
+    *pDirNodo = pNodoEliminar->next;
+    (*pDirNodo)->prev = pNodoEliminar->prev;
+    delete pNodoEliminar->data;
+    delete pNodoEliminar;
+    this->_size--;
 
-template <typename T>
-void Lista<T>::eliminarPrimero() {
-    struct Nodo **ptrDirPrimero = &(_first);
-    if (*ptrDirPrimero != nullptr) {
-        struct Nodo *ptrNodoElminar = *ptrDirPrimero;
-        *ptrDirPrimero =  (*ptrDirPrimero)->_next;
-        if (_last == ptrNodoEliminar) _last = *ptrDirPrimero;
-        delete ptrNodoEliminar;
-        _len--;
-    }
-}
-
-template <typename T>
-void Lista<T>::eliminarUltimo() {
-    struct Nodo *ptrLast = _last;
-    if (ptrLast != nullptr) {
-        _last = _last->_prev;
-        if (_first = ptrLast) _first = _last;
-        delete ptrLast;
-        _len--;
-    }
 }
 
 template <typename T>
 int Lista<T>::longitud() const {
-    return _len;
+    return this->_size;
 }
 
 template <typename T>
 const T& Lista<T>::iesimo(Nat i) const {
-    struct Nodo *nodo = _first;
-    for(int j = 0; j < i; j++) {
-        nodo = nodo->_next;
+    struct Nodo* pNodo = this->_first;
+    while (i > 0) {
+        pNodo = pNodo->next;
+        --i;
     }
-    return &(nodo->_elem);
+    return *(pNodo->data);
 }
 
 template <typename T>
 T& Lista<T>::iesimo(Nat i) {
-     struct Nodo *nodo = _first;
-    for(int j = 0; j < i; j++) {
-        nodo = nodo->_next;
+    struct Nodo* pNodo = this->_first;
+    while (i > 0) {
+        pNodo = pNodo->next;
+        --i;
     }
-    return &(nodo->_elem);
+    return *(pNodo->data);
 }
 
 template <typename T>
 void Lista<T>::mostrar(ostream& o) {
-    
+    // Completar
+}
+
+template<typename T>
+void Lista<T>::deleteFirst() {
+    if (this->_size == 1) {
+        delete this->_first->data;
+        delete this->_first;
+        this->_first = nullptr;
+        this->_last = nullptr;
+        this->_size = 0;
+        return;
+    }
+    struct Nodo** pDirNodo = &(this->_first);
+    struct Nodo* tmp = *pDirNodo;
+    ((*pDirNodo)->next)->prev = (*pDirNodo)->prev;
+    *pDirNodo = (*pDirNodo)->next;
+    delete tmp->data;
+    delete tmp;
+    this->_size--;
+}
+
+template<typename T>
+void Lista<T>::deleteLast() {
+    if (this->_size == 1) {
+        delete this->_first->data;
+        delete this->_first;
+        this->_first = nullptr;
+        this->_last = nullptr;
+        this->_size = 0;
+        return;
+    }
+    struct Nodo** pDirNodo = &(this->_last);
+    struct Nodo* tmp = *pDirNodo;
+    ((*pDirNodo)->prev)->next = (*pDirNodo)->next;
+    *pDirNodo = (*pDirNodo)->prev;
+    delete tmp->data;
+    delete tmp;
+    this->_size--;
 }
